@@ -1,0 +1,59 @@
+{
+    "variables": {
+        "docker_hub_login_username": "",
+        "docker_hub_login_password": "",
+        "docker_hub_organization": "hcrhall",
+        "docker_hub_repository": "sentinel",
+        "sentinel_version": "0.15.1"
+    },
+    "sensitive-variables": [
+        "docker_hub_login_username",
+        "docker_hub_login_password",
+        "docker_hub_organization",
+        "docker_hub_repository"
+    ],
+    "builders": [{
+        "type": "docker",
+        "image": "alpine:3.9",
+        "commit": true,
+        "changes": [
+            "USER sentinel",
+            "LABEL com.hashicorp.vendor='HashiCorp, Inc.'",
+            "LABEL com.hashicorp-maintainer='HashiCorp Sentinel Product Team <sentinel@hashicorp.com>'",
+            "LABEL version={{user `sentinel_version`}}",
+            "LABEL description='Sentinel is a language and framework for policy built to be embedded in existing software to enable fine-grained, logic-based policy controls.'",
+            "CMD [\"sentinel\", \"--help\"]",
+            "ENTRYPOINT sentinel"
+        ]
+    }],
+    "provisioners": [
+        {
+            "type": "shell",
+            "script": "install.sh",
+            "environment_vars": [
+                "SENTINEL_VERSION={{user `sentinel_version`}}",
+                "HASHICORP_RELEASES=https://releases.hashicorp.com"
+            ]
+        }
+    ],
+    "post-processors": [
+        [
+            {
+                "type": "docker-tag",
+                "repository": "{{user `docker_hub_organization`}}/{{user `docker_hub_repository`}}",
+                "tag": "{{user `sentinel_version`}}"
+            },
+            {
+                "type": "docker-tag",
+                "repository": "{{user `docker_hub_organization`}}/{{user `docker_hub_repository`}}",
+                "tag": "latest"
+            },
+            {
+                "type": "docker-push",
+                "login": true,
+                "login_username": "{{user `docker_hub_login_username`}}",
+                "login_password": "{{user `docker_hub_login_password`}}"
+            }
+        ]
+    ]
+}
