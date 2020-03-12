@@ -1,11 +1,44 @@
-# Sentinel Official Image Build
+# About this Repository
 
-The version of this hosted on [HashiCorp's Docker Hub for Sentinel](https://hub.docker.com/r/hashicorp/sentinel/)
-is built from the same source as the [Sentinel Official Image](https://hub.docker.com/_/sentinel/).
+Sentinel is a language and framework for policy which is built to be embedded in existing software to enable fine-grained, logic-based policy decisions. Sentinel is an enterprise-only feature of HashiCorp Consul, Nomad, Terraform, and Vault.
 
-There are several pieces that are used to build this image:
+This repo contains the docker configuration for the official Sentinel CLI image hosted on [HashiCorp's Docker Hub for Sentinel](https://hub.docker.com/r/hashicorp/sentinel/). The image is built using the latest Sentinel CLI binary that is made freely available on [https://releases.hashicorp.com](https://releases.hashicorp.com/).
 
-* We start with an Alpine base image and add CA certificates in order to reach
-  the HashiCorp releases server.
-* Finally a specific Sentinel build is fetched and the rest of the Sentinel-specific
-  configuration happens according to the Packer [build.json](0.X/build/build.json).
+If you wish to review all of the latest Sentinel runtime features and bug fixes, you can do so via the [Sentinel Runtime release notes](https://docs.hashicorp.com/sentinel/changelog).
+
+## Getting Started
+
+1.  Print the Sentinel runtime version
+
+```shell
+docker run -it \
+    hashicorp/sentinel:latest \
+    --version
+```
+
+2. Format Sentinel policy to a canonical format
+```shell
+docker run -it \
+    --volume $(pwd):/app/ \
+    --workdir /app/ \
+    hashicorp/sentinel:latest \
+    fmt -check=true $(find . -name "*.sentinel" -type f)
+```
+
+3. Test a policy within the working directory
+```shell
+docker run -it \
+    --volume $(pwd):/app/ \
+    --workdir /app/ \
+    hashicorp/sentinel:latest \
+    test
+```
+
+4. Recursively test a grouping of policies within the working directory
+```shell
+docker run -it \
+    --volume $(pwd):/app/ \
+    --workdir /app/ \
+    hashicorp/sentinel:latest \
+    test $(find . -name "*.sentinel" ! -path "*/testdata/*")
+```
