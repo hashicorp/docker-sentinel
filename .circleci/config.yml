@@ -2,7 +2,7 @@ version: 2.1
 parameters:
   sentinel-version:
     type: string
-    default: "latest"
+    default: "0.16.1"
 executors:
   docker-publisher:
     environment:
