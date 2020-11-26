@@ -24,10 +24,6 @@ ENV HASHICORP_RELEASES=https://releases.hashicorp.com
 
 COPY ./docker-entrypoint.sh /bin
 
-# Create a non-root user to run the software.
-RUN addgroup ${NAME} && \
-    adduser -S -G ${NAME} ${NAME}
-
 # Set up certificates, base tools, and software.
 RUN set -eux && \
     apk add --no-cache ca-certificates curl gnupg libcap openssl jq iputils && \
@@ -63,5 +59,4 @@ RUN set -eux && \
     apk del gnupg openssl && \
     rm -rf /root/.gnupg
 
-USER ${NAME}
 ENTRYPOINT ["docker-entrypoint.sh"]
