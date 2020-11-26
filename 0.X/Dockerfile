@@ -26,7 +26,7 @@ COPY ./docker-entrypoint.sh /bin
 
 # Set up certificates, base tools, and software.
 RUN set -eux && \
-    apk add --no-cache ca-certificates curl gnupg libcap openssl jq iputils && \
+    apk add --no-cache ca-certificates curl gnupg libcap openssl jq iputils git && \
     BUILD_GPGKEY=91A6E7F85D05C65630BEF18951852D87348FFC4C; \
     found=''; \
     for server in \
@@ -57,6 +57,6 @@ RUN set -eux && \
     cd /tmp && \
     rm -rf /tmp/build && \
     apk del gnupg openssl && \
-    rm -rf /root/.gnupg
+    rm -rf ~/.gnupg
 
 ENTRYPOINT ["docker-entrypoint.sh"]
