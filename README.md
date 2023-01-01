@@ -42,3 +42,4 @@ docker run -it \
     hashicorp/sentinel:latest \
     test $(find . -name "*.sentinel" ! -path "*/testdata/*")
 ```
+test
